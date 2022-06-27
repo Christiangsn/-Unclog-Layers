@@ -1,17 +1,17 @@
 import axios from 'axios'
+import { CreateTransaction } from '../../Application/useCases/Transaction/CreateTransaction/CreateTransaction'
 
 test('Should create one transaction', async () => {
     const code = `${Math.floor(Math.random() * 2000)}`
-    await axios({
-        url: 'http://localhost:3000/transactions',
-        method: 'post',
-        data: {
-            code,
-            amount: 1000,
-            numberInstallments: 12,
-            paymentMethod: 'credit_card'
-        }
-    })
+    const request = {
+        code,
+        amount: 1000,
+        numberInstallments: 12,
+        paymentMethod: 'credit_card'
+    }
+    const createTransaction = new CreateTransaction()
+    await createTransaction.execute(request)
+
 
     const response = await axios({
         url: `http://localhost:3000/transactions/${code}`,

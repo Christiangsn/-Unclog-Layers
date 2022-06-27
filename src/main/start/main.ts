@@ -1,30 +1,20 @@
 import express, { Response, Request } from "express"
 import pgp from 'pg-promise'
 
+import { CreateTransaction } from "../../Application/useCases/Transaction/CreateTransaction/CreateTransaction"
+
 const app = express()
 
 app.use(express.json())
 
 app.post('/transactions', async (req: Request, res: Response) => {
-    const connection = pgp()('postgres://postgres:123456@localhost:5432/app')
-    await connection.query('insert into transaction (code, amount, number_installments, payment_method) values ($1, $2, $3, $4)', [req.body.code, req.body.amount, req.body.numberInstallments, req.body.paymentMethod])
-    
-    let numbersTransaction = 1
-    let amountTransaction = Math.round((req.body.amount / req.body.numberInstallments) * 100) / 100
-    let diff =  Math.round((req.body.amount - amountTransaction * req.body.numberInstallments) * 100)  / 100
-
-    while (numbersTransaction <= req.body.numberInstallments){
-
-        if(numbersTransaction === req.body.numberInstallments)  {
-            amountTransaction += diff
-        }
-
-        await connection.query('insert into installment (code, number, amount) values ($1, $2, $3)', [req.body.code, numbersTransaction, amountTransaction])
-        numbersTransaction++
-    }
-
-    await connection.$pool.end()
-
+    const createTransaction = new CreateTransaction()
+    await createTransaction.execute({
+        amount: req.body.amount,
+        code: req.body.code,
+        numberInstallments: req.body.numberInstallments,
+        paymentMethod: req.body.paymentMethod
+    })
     res.end()
         
 })
