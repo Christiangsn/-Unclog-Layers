@@ -1,3 +1,4 @@
+import { GetTransaction } from './../../Application/useCases/Transaction/GetTransaction/GetTransaction';
 import express, { Response, Request } from "express"
 import pgp from 'pg-promise'
 
@@ -20,21 +21,9 @@ app.post('/transactions', async (req: Request, res: Response) => {
 })
 
 app.get('/transactions/:code', async (req: Request, res: Response) => { 
-    const connection = pgp()('postgres://postgres:123456@localhost:5432/app')
-    const transaction = await connection.one('SELECT * FROM transaction WHERE code = $1', [req.params.code])
-    transaction.amount = parseFloat(transaction.amount)
-    transaction.paymentMethod = transaction.payment_method
 
-    const installments = await connection.query('SELECT * FROM installment WHERE code = $1', [req.params.code])
-
-    for (const installment of installments) {
-        installment.amount = parseFloat(installment.amount)
-    }
-
-    transaction.installments = installments
-
-    await connection.$pool.end()
-
+    const getTransaction = new GetTransaction()
+    const transaction = await getTransaction.execute(req.params.code)
     res.json(transaction)
 })
 

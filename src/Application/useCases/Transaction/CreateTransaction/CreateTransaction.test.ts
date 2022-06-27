@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { CreateTransaction } from '../../Application/useCases/Transaction/CreateTransaction/CreateTransaction'
-import { GetTransaction } from '../../Application/useCases/Transaction/GetTransaction/GetTransaction'
+import { GetTransaction } from '../GetTransaction/GetTransaction'
+import { CreateTransaction } from './CreateTransaction'
+
 
 test('Should create one transaction', async () => {
     const code = `${Math.floor(Math.random() * 2000)}`

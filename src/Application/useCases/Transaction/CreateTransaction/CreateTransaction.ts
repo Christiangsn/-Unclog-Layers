@@ -1,6 +1,6 @@
 import pgp from 'pg-promise'
 
-import { ICreateTransaction, ICreateTransactionDTO } from "../../../Interfaces/CreateTransaction";
+import { ICreateTransaction, ICreateTransactionDTO } from "../../../Interfaces/Transaction";
 
 export class CreateTransaction implements ICreateTransaction {
     constructor () { }
